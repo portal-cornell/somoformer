@@ -1,0 +1,18 @@
+2023-04-20 21:01:22,489 Hello!
+2023-04-20 21:01:22,489 Initializing with config:
+2023-04-20 21:01:22,490 {'SEED': 0, 'EXPERIMENT': 'default_experiment', 'TRAIN': {'batch_size': 128, 'epochs': 32, 'num_workers': 0, 'input_track_size': 16, 'output_track_size': 14, 'lr': 0.0001, 'lr_decay': 1, 'lr_drop': True, 'aux_weight': 0.2, 'val_frequency': 1, 'optimizer': 'adam', 'max_grad_norm': 1.0}, 'DATA': {'joints': 'somof', 'deltas': False, 'add_flips': True, 'segmented': False, 'aug_rotate': True, 'aug_scale': False, 'aug_permute': True, 'train_datasets': ['3dpw']}, 'MODEL': {'num_kps': 13, 'num_layers': 6, 'num_heads': 8, 'dim_hidden': 256, 'dim_feedforward': 1024, 'type': 'somoformer', 'eval_single': False, 'dct_n': 30, 'location_method': 'grid', 'grid_len': 3, 'grid_emb_size': 8, 'checkpoint': '', 'output_scale': 1, 'normalize_inputs': False, 'residual_connection': True, 'learned_embedding': True}, 'OUTPUT': {'log_dir': '/share/portal/pd337/somoformer/experiments/default_experiment', 'ckpt_dir': '/share/portal/pd337/somoformer/experiments/default_experiment/checkpoints/checkpoint_train_on_3dpw', 'runs_dir': '/share/portal/pd337/somoformer/experiments/default_experiment/tensorboard'}, 'dry_run': False, 'DEVICE': 'cpu'}
+2023-04-20 21:01:22,490 Loading dataset 3dpw
+2023-04-20 21:01:24,885 Loaded 49648 annotations for 3dpw
+2023-04-20 21:01:24,886 Training on a total of 49648 annotations.
+2023-04-20 21:01:24,887 Loading dataset 3dpw
+2023-04-20 21:01:27,147 Loaded 838 annotations for 3dpw
+2023-04-20 21:01:27,148 Loading dataset 3dpw
+2023-04-20 21:01:27,858 Loaded 266 annotations for 3dpw
+2023-04-20 21:01:27,859 Loading dataset somof
+2023-04-20 21:01:28,175 Loaded 221 annotations for somof
+2023-04-20 21:01:28,175 Loading dataset somof
+2023-04-20 21:01:28,224 Loaded 36 annotations for somof
+2023-04-20 21:01:28,231 Creating bert model.
+2023-04-20 21:01:28,391 Model has 4882842 parameters.
+2023-04-20 21:33:37,204 Saving checkpoint to checkpoint.pth.tar.
+2023-04-20 21:33:37,321 All done.
