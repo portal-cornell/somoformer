@@ -53,6 +53,7 @@ def evaluate_vim(model, dataloader, config, logger, return_all=False, bar_prefix
         pred_joints = pred_joints.cpu().numpy().reshape(out_joints.shape) # (B, out_F, J*K)
         pred_masks = pred_masks.cpu().numpy()
 
+
         for person in range(num_people):
             JK = out_joints.shape[2] // num_people
             K = out_joints.shape[-1] // pred_masks.shape[-1]
@@ -98,6 +99,12 @@ def evaluate_mpjpe(model, dataloader, config, logger, return_all=False, bar_pref
     for i, batch in enumerate(dataloader):
         joints, masks, padding_mask = batch
         padding_mask = padding_mask.to(config["DEVICE"])
+        
+        print('')
+        # print(f'Joints: {joints.shape}') # (batch_size, num_people, total_frames, num_joints, 3d)
+        # print(f'Masks: {masks.shape}') # (batch_size, num_people, total_frames, num_joints)
+        # print(f'Padding mask: {padding_mask.shape}') # (batch_size, num_people)
+
         in_joints, in_masks, out_joints, out_masks, pelvis, padding_mask = batch_process_joints(joints, masks, padding_mask, config)
         pred_joints = inference(model, config, in_joints, pelvis, padding_mask, out_len=out_F)
         pred_masks = torch.ones(out_masks.shape) # TODO do this
@@ -105,20 +112,31 @@ def evaluate_mpjpe(model, dataloader, config, logger, return_all=False, bar_pref
         # logger.info("Evaluating VIM and VAM...")
         out_joints = out_joints.cpu() # (B, out_F, N*J,K)
         pred_joints = pred_joints.cpu().reshape(out_joints.shape)           # (B, out_F, N*J,K)
+
+        # print(f'in_joints: {in_joints.shape}') # (batch_size, input_frames, num_people*num_joints, 3d)
+        # print(f'in_masks: {in_masks.shape}') # (batch_size, input_frames, num_people*num_joints)
+        # print(f'out_joints: {out_joints.shape}') # (batch_size, output_frames, num_people*num_joints, 3d)
+        # print(f'out_masks: {out_masks.shape}') # (batch_size, output_frames, num_people*num_joints)
+        # print(f'pelvis: {pelvis.shape}') # (batch_size, 1 (maybe last timestep?), 2ppl*1joint, 3d)
+        # print(f'padding_mask: {padding_mask.shape}') # (batch_size, num_people) 
+        # print(f'pred_joints: {pred_joints.shape}') # (batch_size, output_frames)
+        # print(f'pred_masks: {pred_masks.shape}') # (batch_size, output_frames, num_people*num_joints)
+        # print(f'out_joints: {out_joints.shape}') # (batch_size, output_frames, num_people*num_joints, 3d)
+        # print(f'pred_joints: {pred_joints.shape}') # (batch_size, output_frames, num_people*num_joints, 3d)
         
         num_people = 1
         if len(joints.shape) == 5:
             _, num_people, _, _, _ = joints.shape
         
         for person in range(num_people):
-            J = out_joints.shape[2] // num_people
+            J = out_joints.shape[2] // num_people # num_joints
 
             for k in range(len(out_joints)):
-                if padding_mask[k,person] != 0:
+                if padding_mask[k,person] != 0: # if the person is padded out in this test point
                     continue
                 
-                person_out_joints = out_joints[k,:,J*person:J*(person+1)]
-                person_pred_joints = pred_joints[k,:,J*person:J*(person+1)]
+                person_out_joints = out_joints[k,:,J*person:J*(person+1)] # GT positions of this person in the future (output_frames, num_joints, 3d)
+                person_pred_joints = pred_joints[k,:,J*person:J*(person+1)] # predicted positions of this person in the future (output_frames, num_joints, 3d)
 
                 mpjpe = torch.norm(person_out_joints - person_pred_joints, dim=-1)
                 if per_joint:
